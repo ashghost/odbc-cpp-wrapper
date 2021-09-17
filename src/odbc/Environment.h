@@ -27,6 +27,8 @@ public:
      */
     static EnvironmentRef create();
 
+    static void enableConnectionPool();
+
 private:
     Environment();
     ~Environment();

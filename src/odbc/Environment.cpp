@@ -13,6 +13,12 @@ EnvironmentRef Environment::create()
 {
     return EnvironmentRef(new Environment);
 }
+
+void Environment::enableConnectionPool()
+{
+    EXEC_ENV(SQLSetEnvAttr, SQL_NULL_HANDLE, SQL_ATTR_CONNECTION_POOLING,
+        (SQLPOINTER)SQL_CP_ONE_PER_HENV, 0);
+}
 //------------------------------------------------------------------------------
 Environment::Environment()
 {
