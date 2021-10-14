@@ -17,6 +17,19 @@ namespace odbc {
 ResultSet::ResultSet(StatementBase* parent)
 : parent_(parent, true)
 {
+    auto meta = getMetaData();
+    auto count = meta->getColumnCount();
+    SQLHDESC hdesc;
+    EXEC_STMT(SQLGetStmtAttr, parent_->hstmt_, SQL_ATTR_APP_ROW_DESC, &hdesc, 0, NULL);
+    for (auto i = 1; i <= count; ++i) {
+        if (meta->getColumnType(i) == SQLDataTypes::Numeric) {
+            auto s = meta->getScale(i);
+            auto p = meta->getPrecision(i);
+            EXEC_STMT(SQLSetDescField, hdesc, i,SQL_DESC_TYPE,(VOID*)SQL_C_NUMERIC,0);
+            EXEC_STMT(SQLSetDescField, hdesc, i,SQL_DESC_PRECISION,(VOID*) p,0);
+            EXEC_STMT(SQLSetDescField, hdesc, i,SQL_DESC_SCALE,(VOID*) s,0);
+        }
+    }
 }
 //------------------------------------------------------------------------------
 ResultSet::~ResultSet()
@@ -153,7 +166,7 @@ Decimal ResultSet::getDecimal(unsigned short columnIndex)
 {
     SQL_NUMERIC_STRUCT num;
     SQLLEN ind;
-    EXEC_STMT(SQLGetData, parent_->hstmt_, columnIndex, SQL_C_NUMERIC, &num,
+    EXEC_STMT(SQLGetData, parent_->hstmt_, columnIndex, SQL_ARD_TYPE, &num,
         sizeof(num), &ind);
     if (ind == SQL_NULL_DATA)
         return Decimal();
