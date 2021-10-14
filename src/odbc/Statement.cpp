@@ -29,17 +29,17 @@ void Statement::execute(const char16_t* sql)
 //------------------------------------------------------------------------------
 ResultSetRef Statement::executeQuery(const char* sql)
 {
-    ResultSetRef ret(new ResultSet(this));
     EXEC_STMT(SQLFreeStmt, hstmt_, SQL_CLOSE);
     EXEC_STMT(SQLExecDirectA, hstmt_, (SQLCHAR*)sql, SQL_NTS);
+    ResultSetRef ret(new ResultSet(this));
     return ret;
 }
 //------------------------------------------------------------------------------
 ResultSetRef Statement::executeQuery(const char16_t* sql)
 {
-    ResultSetRef ret(new ResultSet(this));
     EXEC_STMT(SQLFreeStmt, hstmt_, SQL_CLOSE);
     EXEC_STMT(SQLExecDirectW, hstmt_, (SQLWCHAR*)sql, SQL_NTS);
+    ResultSetRef ret(new ResultSet(this));
     return ret;
 }
 //------------------------------------------------------------------------------

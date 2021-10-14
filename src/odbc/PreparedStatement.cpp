@@ -308,10 +308,10 @@ ResultSetMetaDataUnicodeRef PreparedStatement::getMetaDataUnicode()
 //------------------------------------------------------------------------------
 ResultSetRef PreparedStatement::executeQuery()
 {
-    ResultSetRef ret(new ResultSet(this));
     EXEC_STMT(SQLFreeStmt, hstmt_, SQL_CLOSE);
     bindParameters();
     EXEC_STMT(SQLExecute, hstmt_);
+    ResultSetRef ret(new ResultSet(this));
     return ret;
 }
 //------------------------------------------------------------------------------
