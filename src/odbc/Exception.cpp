@@ -1,4 +1,5 @@
 #include <sstream>
+#include <codecvt>
 #include <odbc/Exception.h>
 #include <odbc/internal/Odbc.h>
 //------------------------------------------------------------------------------
@@ -9,11 +10,13 @@ namespace {
 bool appendRecord(short handleType, void* handle, SQLSMALLINT recNumber,
     ostringstream& out)
 {
-    SQLCHAR sqlState[6];
+    std::wstring_convert<std::codecvt_utf8_utf16<SQLWCHAR>, SQLWCHAR>
+        convert;
+    SQLWCHAR sqlState[6];
     SQLINTEGER nativeError;
-    SQLCHAR messageText[2048];
+    SQLWCHAR messageText[2048];
     SQLSMALLINT textLength;
-    SQLRETURN rc = SQLGetDiagRecA(handleType, handle, recNumber, sqlState,
+    SQLRETURN rc = SQLGetDiagRecW(handleType, handle, recNumber, sqlState,
         &nativeError, messageText, sizeof(messageText)/sizeof(SQLCHAR),
         &textLength);
     switch (rc)
@@ -22,8 +25,8 @@ bool appendRecord(short handleType, void* handle, SQLSMALLINT recNumber,
     case SQL_SUCCESS_WITH_INFO:
         if (recNumber > 1)
             out << endl;
-        out << "ERROR: " << nativeError << ": " << sqlState << " : "
-            << messageText << endl;
+        out << "ERROR: " << nativeError << ": " << convert.to_bytes(sqlState) << " : "
+            << convert.to_bytes(messageText);
         return true;
     case SQL_ERROR:
         if (recNumber > 1)
