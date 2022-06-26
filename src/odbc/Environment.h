@@ -7,7 +7,7 @@
 #include <odbc/Forwards.h>
 #include <odbc/Types.h>
 //------------------------------------------------------------------------------
-namespace odbc {
+NS_ODBC_START
 //------------------------------------------------------------------------------
 struct DataSourceInformation;
 struct DriverInformation;
@@ -129,6 +129,6 @@ struct DriverInformation
     std::vector<Attribute> attributes;
 };
 //------------------------------------------------------------------------------
-} // namespace odbc
+NS_ODBC_END
 //------------------------------------------------------------------------------
 #endif

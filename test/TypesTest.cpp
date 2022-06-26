@@ -7,7 +7,7 @@
 using namespace std;
 using testing::Types;
 //------------------------------------------------------------------------------
-namespace odbc {
+NS_ODBC_START
 namespace tests {
 //------------------------------------------------------------------------------
 TEST(TypesTest, decimal)
@@ -199,7 +199,7 @@ TEST(TypesTest, time)
     EXPECT_FALSE(time(12, 34, 55) >= time(12, 35, 55));
 
     ostringstream os;
-    os << odbc::time(2, 12, 3);
+    os << time(2, 12, 3);
     EXPECT_STREQ("02:12:03", os.str().c_str());
 }
 //------------------------------------------------------------------------------
@@ -342,4 +342,4 @@ TEST(TypesTest, Nullable)
 }
 //------------------------------------------------------------------------------
 } // namespace tests
-} // namespace odbc
+NS_ODBC_END

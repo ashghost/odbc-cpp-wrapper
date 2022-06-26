@@ -50,8 +50,7 @@ bool appendRecord(short handleType, void* handle, SQLSMALLINT recNumber,
 //------------------------------------------------------------------------------
 }
 //------------------------------------------------------------------------------
-namespace odbc
-{
+NS_ODBC_START
 //------------------------------------------------------------------------------
 void Exception::checkForError(short rc, short handleType, void* handle)
 {
@@ -83,4 +82,4 @@ const char* Exception::what() const noexcept
     return msg_.c_str();
 }
 //------------------------------------------------------------------------------
-} // namespace odbc
+NS_ODBC_END

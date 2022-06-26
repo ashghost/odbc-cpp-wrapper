@@ -4,7 +4,7 @@
 #include <atomic>
 #include <odbc/Config.h>
 //------------------------------------------------------------------------------
-namespace odbc {
+NS_ODBC_START
 //------------------------------------------------------------------------------
 template<typename T>
 class Reference;
@@ -56,7 +56,7 @@ public:
     /**
      * Constructs a NULL reference.
      */
-    Reference() : ptr_(0) {}
+    Reference() : ptr_(nullptr) {}
 
     /**
      * Constructs a reference to a given reference-counted object.
@@ -81,6 +81,16 @@ public:
     Reference(const Reference<T>& other) { set_(other.ptr_); }
 
     /**
+     * Move constructor moving an existing reference.
+     *
+     * @param other  Another reference
+     */
+    Reference(Reference<T>&& other) noexcept : ptr_(other.ptr_)
+    {
+        other.ptr_ = nullptr;
+    }
+
+    /**
      * Destructor decreasing the reference-count of the managed object.
      */
     ~Reference() { free_(); }
@@ -93,10 +103,27 @@ public:
      * the reference-count of the newly managed object is incremented.
      *
      * @param other  Another reference.
+     * @return       Returns a reference to this object.
      */
     Reference& operator=(const Reference<T>& other)
     {
         reset_(other.ptr_);
+        return *this;
+    }
+
+    /**
+     * Move-assigns another reference to this reference.
+     *
+     * The reference-count of the currently held object is decreased.
+     *
+     * @param other  Another reference.
+     * @return       Returns a reference to this object.
+     */
+    Reference& operator=(Reference<T>&& other) noexcept
+    {
+        free_();
+        ptr_ = other.ptr_;
+        other.ptr_ = nullptr;
         return *this;
     }
 
@@ -106,7 +133,7 @@ public:
      * @return  Returns true if this reference manages an object, false
      *          otherwise.
      */
-    bool isNull() const { return ptr_ == 0; }
+    bool isNull() const { return ptr_ == nullptr; }
 
     /**
      * Returns a reference to the managed object.
@@ -156,7 +183,7 @@ public:
      * Decreases the reference-count of the managed object and does not
      * reference it anymore.
      */
-    void reset() { reset_(0); }
+    void reset() { reset_(nullptr); }
 
     /**
      * Releases the currently managed object and manages a new object.
@@ -214,6 +241,6 @@ private:
     T* ptr_;
 };
 //------------------------------------------------------------------------------
-} // namespace odbc
+NS_ODBC_END
 //------------------------------------------------------------------------------
 #endif
